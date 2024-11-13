@@ -28,15 +28,39 @@ if (builder.Environment.IsDevelopment())
 else
 {
     // // Use real services otherwise
-     builder.Services.AddHttpClient<IProductService, ProductService>(client =>
-     {
-         client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
-     });
+    builder.Services.AddHttpClient<IProductService, ProductService>("MyClient", client =>
+    {
+        var uriString = builder.Configuration["WebServices:Products:BaseUrl"];
+        if (Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
+        {
+            client.BaseAddress = uri;
+        }
+        else
+        {
+            throw new UriFormatException($"Invalid URI: {uriString}");
+        }
+    });
+        builder.Services.AddHttpClient<ICompanyProductService, CompanyProductService>("MyClient", client =>
+    {
+        var uriString = builder.Configuration["WebServices:Products:BaseUrl"];
+        if (Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
+        {
+            client.BaseAddress = uri;
+        }
+        else
+        {
+            throw new UriFormatException($"Invalid URI: {uriString}");
+        }
+    });
+    //  builder.Services.AddHttpClient<IProductService, ProductService>(client =>
+    //  {
+    //      client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
+    //  });
 
-     builder.Services.AddHttpClient<ICompanyProductService, CompanyProductService>(client =>
-     {
-         client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
-     });
+    //  builder.Services.AddHttpClient<ICompanyProductService, CompanyProductService>(client =>
+    //  {
+    //      client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
+    //  });
 }
 
 builder.Services.AddMemoryCache();
