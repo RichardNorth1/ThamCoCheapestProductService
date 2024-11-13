@@ -70,19 +70,13 @@ jobs:
     runs-on: windows-latest
     needs: test
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-
-    - name: Publish
-      run: dotnet publish -c Release -o ${{ github.workspace }}/publish
-
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'YOUR_AZURE_WEB_APP_NAME'
-        publish-profile: ${{ secrets.AZURE_WEB_APP_PUBLISH_PROFILE }}
-        package: ${{ github.workspace }}/publish
+      - name: Download artifact for deployment job (Dev & Testing)
+        uses: actions/download-artifact@v3
+        with:
+          name: CustomerManagementService-App
+      - name: Deploy to Azure Web App (Dev & Testing)
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
