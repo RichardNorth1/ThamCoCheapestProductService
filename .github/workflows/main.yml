@@ -5,10 +5,10 @@ name: Build, Test, and Deploy to Azure
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 env:
   AZURE_WEBAPP_NAME: ThamCoCheapestProductService    # set this to the name of your Azure Web App
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
