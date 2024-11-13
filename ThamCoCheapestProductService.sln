@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35004.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThamCoCheapestProductService", "ThamCoCheapestProductService\ThamCoCheapestProductService.csproj", "{8BE06267-DB18-4846-AE13-7362379E9519}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThamCoCheapestProductService", "ThamCoCheapestProductService\ThamCoCheapestProductService.csproj", "{8BE06267-DB18-4846-AE13-7362379E9519}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThamCoCheapestProductService.Tests", "ThamCoCheapestProductService.Tests\ThamCoCheapestProductService.Tests.csproj", "{DDBDDB35-C18D-4EB6-946C-ED5757B8530B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8BE06267-DB18-4846-AE13-7362379E9519}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BE06267-DB18-4846-AE13-7362379E9519}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BE06267-DB18-4846-AE13-7362379E9519}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDBDDB35-C18D-4EB6-946C-ED5757B8530B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDBDDB35-C18D-4EB6-946C-ED5757B8530B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDBDDB35-C18D-4EB6-946C-ED5757B8530B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDBDDB35-C18D-4EB6-946C-ED5757B8530B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

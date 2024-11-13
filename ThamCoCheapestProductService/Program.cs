@@ -27,21 +27,16 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-
-     // Use fake services in development
-    builder.Services.AddSingleton<IProductService, ProductServiceFake>();
-    builder.Services.AddSingleton<ICompanyProductService, CompanyProductServiceFake>();
-
     // // Use real services otherwise
-    // builder.Services.AddHttpClient<IProductService, ProductService>(client =>
-    // {
-    //     client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
-    // });
+     builder.Services.AddHttpClient<IProductService, ProductService>(client =>
+     {
+         client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
+     });
 
-    // builder.Services.AddHttpClient<ICompanyProductService, CompanyProductService>(client =>
-    // {
-    //     client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
-    // });
+     builder.Services.AddHttpClient<ICompanyProductService, CompanyProductService>(client =>
+     {
+         client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
+     });
 }
 
 builder.Services.AddMemoryCache();
@@ -49,13 +44,12 @@ builder.Services.AddMemoryCache();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-// }
-app.UseSwagger();
-app.UseSwaggerUI();
+ if (app.Environment.IsDevelopment())
+ {
+     app.UseSwagger();
+     app.UseSwaggerUI();
+ }
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
