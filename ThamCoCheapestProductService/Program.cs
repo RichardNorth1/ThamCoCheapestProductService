@@ -40,6 +40,12 @@ else
 }
 
 builder.Services.AddMemoryCache();
+builder.Services.AddLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+    logging.AddAzureWebAppDiagnostics();
+});
 
 var app = builder.Build();
 

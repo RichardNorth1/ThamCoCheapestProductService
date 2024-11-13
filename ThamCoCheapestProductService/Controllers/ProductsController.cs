@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using ThamCoCheapestProductService.Dtos;
 using ThamCoCheapestProductService.Services;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ThamCoCheapestProductService.Controllers
 {
@@ -16,26 +18,24 @@ namespace ThamCoCheapestProductService.Controllers
         private readonly ICompanyProductService _companyProductService;
         private readonly IProductService _productService;
         private readonly IMapper _mapper;
+        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(ICompanyProductService companyProductService, IProductService productService, IMapper mapper)
+        public ProductsController(ICompanyProductService companyProductService, IProductService productService, IMapper mapper, ILogger<ProductsController> logger)
         {
             _companyProductService = companyProductService;
             _productService = productService;
             _mapper = mapper;
+            _logger = logger;
         }
 
-        // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CompanyWithProductDto>>> GetAllCheapestProductSuppliers()
         {
             try
             {
-                Trace.WriteLine("Getting all cheapest product suppliers.");
                 var cheapestProductSuppliers = await FindAllCheapestProductSuppliers();
-                Trace.WriteLine(cheapestProductSuppliers);
                 if (cheapestProductSuppliers == null || !cheapestProductSuppliers.Any())
                 {
-                    Trace.WriteLine("No suppliers found.");
                     return NotFound("No suppliers found.");
                 }
 
@@ -43,12 +43,11 @@ namespace ThamCoCheapestProductService.Controllers
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(ex.Message);
-                return BadRequest(ex.Message);
+                _logger.LogError(ex, "Error occurred while getting all cheapest product suppliers.");
+                return StatusCode(500, "Internal server error");
             }
         }
 
-        // GET api/Products/5
         [HttpGet("{productId}")]
         public async Task<ActionResult<CompanyWithProductDto>> GetCheapestProductSupplierById(int productId)
         {
@@ -64,7 +63,8 @@ namespace ThamCoCheapestProductService.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(ex.Message);
+                _logger.LogError(ex, $"Error occurred while getting the cheapest product supplier for product ID {productId}.");
+                return StatusCode(500, "Internal server error");
             }
         }
 
