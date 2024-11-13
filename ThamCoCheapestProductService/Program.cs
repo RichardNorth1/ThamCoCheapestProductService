@@ -1,5 +1,4 @@
 using AutoMapper;
-using Microsoft.Extensions.Logging.AzureAppServices;
 using ThamCoCheapestProductService;
 using ThamCoCheapestProductService.Services;
 using ThamCoCheapestProductService.Services.CompanyProduct;
@@ -28,32 +27,16 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-    // Use real services otherwise
-    var productServiceBaseUrl = builder.Configuration["WebServices:Products:BaseUrl"];
-    if (Uri.TryCreate(productServiceBaseUrl, UriKind.Absolute, out var productServiceUri))
-    {
-        builder.Services.AddHttpClient<IProductService, ProductService>(client =>
-        {
-            client.BaseAddress = productServiceUri;
-        });
-    }
-    else
-    {
-        throw new InvalidOperationException("Invalid ProductService Base URL");
-    }
+    // // Use real services otherwise
+     builder.Services.AddHttpClient<IProductService, ProductService>(client =>
+     {
+         client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
+     });
 
-    var companyProductServiceBaseUrl = builder.Configuration["WebServices:Products:BaseUrl"];
-    if (Uri.TryCreate(companyProductServiceBaseUrl, UriKind.Absolute, out var companyProductServiceUri))
-    {
-        builder.Services.AddHttpClient<ICompanyProductService, CompanyProductService>(client =>
-        {
-            client.BaseAddress = companyProductServiceUri;
-        });
-    }
-    else
-    {
-        throw new InvalidOperationException("Invalid CompanyProductService Base URL");
-    }
+     builder.Services.AddHttpClient<ICompanyProductService, CompanyProductService>(client =>
+     {
+         client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
+     });
 }
 
 builder.Services.AddMemoryCache();
@@ -67,11 +50,11 @@ builder.Services.AddLogging(logging =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+ if (app.Environment.IsDevelopment())
+ {
+     app.UseSwagger();
+     app.UseSwaggerUI();
+ }
 
 app.UseHttpsRedirection();
 
@@ -80,3 +63,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
