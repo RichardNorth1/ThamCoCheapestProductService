@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,6 +12,7 @@ using ThamCoCheapestProductService.Services;
 
 namespace ThamCoCheapestProductService.Controllers
 {
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
@@ -28,6 +30,7 @@ namespace ThamCoCheapestProductService.Controllers
             _logger = logger;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CompanyWithProductDto>>> GetAllCheapestProductSuppliers()
         {
@@ -48,6 +51,7 @@ namespace ThamCoCheapestProductService.Controllers
             }
         }
 
+        //[Authorize]
         [HttpGet("{productId}")]
         public async Task<ActionResult<CompanyWithProductDto>> GetCheapestProductSupplierById(int productId)
         {
@@ -91,8 +95,16 @@ namespace ThamCoCheapestProductService.Controllers
             {
                 return null;
             }
+            var companyProductResponse = new HttpResponseMessage();
+            try
+            {
+                 companyProductResponse = await _companyProductService.GetCompanyProducts();
 
-            var companyProductResponse = await _companyProductService.GetCompanyProducts();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while getting all cheapest product suppliers.");
+            }
             if (!companyProductResponse.IsSuccessStatusCode)
             {
                 throw new Exception(companyProductResponse.ReasonPhrase);
@@ -120,7 +132,8 @@ namespace ThamCoCheapestProductService.Controllers
                         Brand = product.Brand,
                         Description = product.Description,
                         Price = cheapestCompanyProduct.Price,
-                        ImageUrl = product.ImageUrl
+                        ImageUrl = product.ImageUrl,
+                        StockLevel = cheapestCompanyProduct.StockLevel
                     };
 
                     cheapestProductSuppliers.Add(companyWithProductDto);
@@ -187,7 +200,8 @@ namespace ThamCoCheapestProductService.Controllers
                 Brand = product.Brand,
                 Description = product.Description,
                 Price = cheapestCompanyProduct.Price,
-                ImageUrl = product.ImageUrl
+                ImageUrl = product.ImageUrl,
+                StockLevel = cheapestCompanyProduct.StockLevel
             };
 
             return companyWithProductDto;

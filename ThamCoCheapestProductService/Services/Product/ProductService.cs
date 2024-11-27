@@ -2,6 +2,11 @@
 using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.Json;
+using ThamCoCheapestProductService.Dtos;
+using ThamCoCheapestProductService.Services.Token;
 
 namespace ThamCoCheapestProductService.Services
 {
@@ -9,21 +14,29 @@ namespace ThamCoCheapestProductService.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IMemoryCache _cache;
+        private readonly ITokenService _tokenService;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
         private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
         private readonly AsyncCircuitBreakerPolicy<HttpResponseMessage> _circuitBreakerPolicy;
 
-        public ProductService(HttpClient httpClient, IMemoryCache cache)
+        public ProductService(HttpClient httpClient, 
+            IMemoryCache cache, 
+            IHttpClientFactory httpClientFactory, 
+            IConfiguration configuration,  
+            ITokenService tokenService)
         {
             _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
             _cache = cache;
+            _tokenService = tokenService;
 
             _retryPolicy = Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
-                .RetryAsync(6, onRetry: (response, retryCount) =>
-                {
-                });
+                .RetryAsync(6);
 
             _circuitBreakerPolicy = Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
-                .CircuitBreakerAsync(5, TimeSpan.FromSeconds(5));
+                .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
         }
 
         public async Task<HttpResponseMessage> GetProduct(int productId)
@@ -34,8 +47,12 @@ namespace ThamCoCheapestProductService.Services
             }
 
             var response = await _retryPolicy.ExecuteAsync(() =>
-                _circuitBreakerPolicy.ExecuteAsync(() =>
-                    _httpClient.GetAsync($"/api/products/{productId}")));
+                _circuitBreakerPolicy.ExecuteAsync(async () =>
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken().Result.AccessToken);
+                    var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, $"/api/products/{productId}"));
+                    return response;
+                }));
 
             if (response.IsSuccessStatusCode)
             {
@@ -46,14 +63,19 @@ namespace ThamCoCheapestProductService.Services
 
         public async Task<HttpResponseMessage> GetProducts()
         {
+
+            // Check cache
             if (_cache.TryGetValue("AllProducts", out HttpResponseMessage cachedResponse))
             {
                 return cachedResponse;
             }
-
             var response = await _retryPolicy.ExecuteAsync(() =>
-                _circuitBreakerPolicy.ExecuteAsync(() =>
-                    _httpClient.GetAsync($"/api/products")));
+                _circuitBreakerPolicy.ExecuteAsync(async () =>
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken().Result.AccessToken);
+                    var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, "/api/products"));
+                    return response;
+                }));
 
             if (response.IsSuccessStatusCode)
             {
