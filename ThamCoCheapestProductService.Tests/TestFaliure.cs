@@ -11,7 +11,7 @@ namespace ThamCoCheapestProductService.Tests
     [TestFixture]
     internal class TestFaliure
     {
-    }
+
 
         [Test]
         public async Task FailureTest()
@@ -20,3 +20,4 @@ namespace ThamCoCheapestProductService.Tests
             Assert.AreEqual(0, 1);
         }
     }
+}
