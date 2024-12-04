@@ -16,7 +16,6 @@ namespace ThamCoCheapestProductService.Tests
         //[Test]
         //public async Task FailureTest()
         //{
-
         //    Assert.AreEqual(0, 1);
         //}
     }
