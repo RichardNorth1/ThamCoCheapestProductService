@@ -24,7 +24,7 @@ var autoMapperConfig = new MapperConfiguration(c => c.AddProfile(new MapperProfi
 IMapper mapper = autoMapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-builder.Services.AddSingleton<ITokenService, TokenService>();
+
 if (builder.Environment.IsDevelopment())
 {
     // Use fake services in development
@@ -58,6 +58,7 @@ else
             throw new UriFormatException($"Invalid URI: {uriString}");
         }
     });
+    builder.Services.AddSingleton<ITokenService, TokenService>();
 }
 
 builder.Services.AddMemoryCache();
