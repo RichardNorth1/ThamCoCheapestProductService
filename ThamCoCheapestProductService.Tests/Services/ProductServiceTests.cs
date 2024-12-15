@@ -11,7 +11,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using Moq.Protected;
 
-namespace ThamCoCheapestProductService.Tests
+namespace ThamCoCheapestProductService.Tests.Services
 {
     [TestFixture]
     public class ProductServiceTests

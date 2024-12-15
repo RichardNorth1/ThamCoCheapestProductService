@@ -14,7 +14,7 @@ using ThamCoCheapestProductService.Dtos;
 using ThamCoCheapestProductService.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ThamCoCheapestProductService.Tests
+namespace ThamCoCheapestProductService.Tests.Controllers
 {
     [TestFixture]
     public class ProductsControllerTests

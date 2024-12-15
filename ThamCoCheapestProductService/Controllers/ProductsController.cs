@@ -12,7 +12,7 @@ using ThamCoCheapestProductService.Services;
 
 namespace ThamCoCheapestProductService.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
@@ -51,7 +51,7 @@ namespace ThamCoCheapestProductService.Controllers
             }
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("{productId}")]
         public async Task<ActionResult<CompanyWithProductDto>> GetCheapestProductSupplierById(int productId)
         {
@@ -120,7 +120,7 @@ namespace ThamCoCheapestProductService.Controllers
                 var cheapestCompanyProduct = companyProducts
                     .Where(cp => cp.ProductId == product.ProductId)
                     .OrderBy(cp => cp.Price)
-                    .FirstOrDefault();
+                    .FirstOrDefault();  
 
                 if (cheapestCompanyProduct != null)
                 {

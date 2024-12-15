@@ -7,7 +7,7 @@ using NUnit.Framework;
 using ThamCoCheapestProductService.Dtos;
 using ThamCoCheapestProductService.Services.Product;
 
-namespace ThamCoCheapestProductService.Tests
+namespace ThamCoCheapestProductService.Tests.Services
 {
     [TestFixture]
     public class ProductServiceFakeTests
@@ -23,15 +23,12 @@ namespace ThamCoCheapestProductService.Tests
         [Test]
         public async Task GetProduct_ReturnsCorrectProduct()
         {
-            // Arrange
             int productId = 1;
 
-            // Act
             var response = await _service.GetProduct(productId);
             var content = await response.Content.ReadAsStringAsync();
             var product = JsonSerializer.Deserialize<ProductDto>(content);
 
-            // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(product);
             Assert.AreEqual(productId, product.ProductId);
@@ -40,15 +37,12 @@ namespace ThamCoCheapestProductService.Tests
         [Test]
         public async Task GetProduct_ReturnsNullForInvalidProduct()
         {
-            // Arrange
             int productId = 999; // Invalid productId
 
-            // Act
             var response = await _service.GetProduct(productId);
             var content = await response.Content.ReadAsStringAsync();
             var product = JsonSerializer.Deserialize<ProductDto>(content);
 
-            // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             Assert.Null(product);
         }
@@ -56,12 +50,10 @@ namespace ThamCoCheapestProductService.Tests
         [Test]
         public async Task GetProducts_ReturnsAllProducts()
         {
-            // Act
             var response = await _service.GetProducts();
             var content = await response.Content.ReadAsStringAsync();
             var products = JsonSerializer.Deserialize<IEnumerable<ProductDto>>(content);
 
-            // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(products);
             Assert.AreEqual(5, products.Count());

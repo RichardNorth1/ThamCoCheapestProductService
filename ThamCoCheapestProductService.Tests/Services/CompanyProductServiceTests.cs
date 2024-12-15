@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Threading;
 
-namespace ThamCoCheapestProductService.Tests
+namespace ThamCoCheapestProductService.Tests.Services
 {
     [TestFixture]
     public class CompanyProductServiceTests
