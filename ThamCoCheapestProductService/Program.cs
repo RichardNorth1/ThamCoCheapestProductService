@@ -1,5 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Polly.Extensions.Http;
+using Polly;
 using ThamCoCheapestProductService;
 using ThamCoCheapestProductService.Services;
 using ThamCoCheapestProductService.Services.CompanyProduct;
@@ -30,34 +32,21 @@ if (builder.Environment.IsDevelopment())
     // Use fake services in development
     builder.Services.AddSingleton<IProductService, ProductServiceFake>();
     builder.Services.AddSingleton<ICompanyProductService, CompanyProductServiceFake>();
+
 }
 else
 {
     // // Use real services otherwise
-    builder.Services.AddHttpClient<IProductService, ProductService>("product client", client =>
+    builder.Services.AddHttpClient<IProductService, ProductService>(client =>
     {
-        var uriString = builder.Configuration["WebServices:Products:BaseUrl"];
-        if (Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
-        {
-            client.BaseAddress = uri;
-        }
-        else
-        {
-            throw new UriFormatException($"Invalid URI: {uriString}");
-        }
-    });
-        builder.Services.AddHttpClient<ICompanyProductService, CompanyProductService>("Company product client", client =>
+        client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
+    }).AddPolicyHandler(GetRetryPolicy())
+                    .AddPolicyHandler(GetCircuitBreakerPolicy());
+    builder.Services.AddHttpClient<ICompanyProductService, CompanyProductService>(client =>
     {
-        var uriString = builder.Configuration["WebServices:Products:BaseUrl"];
-        if (Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
-        {
-            client.BaseAddress = uri;
-        }
-        else
-        {
-            throw new UriFormatException($"Invalid URI: {uriString}");
-        }
-    });
+        client.BaseAddress = new Uri(builder.Configuration["WebServices:Products:BaseUrl"]);
+    }).AddPolicyHandler(GetRetryPolicy())
+                    .AddPolicyHandler(GetCircuitBreakerPolicy());
     builder.Services.AddSingleton<ITokenService, TokenService>();
 }
 
@@ -86,3 +75,18 @@ app.MapControllers();
 
 app.Run();
 
+IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+        .WaitAndRetryAsync(5, retryAttempt =>
+            TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+}
+
+IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
+}

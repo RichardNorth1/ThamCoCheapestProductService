@@ -38,19 +38,49 @@ namespace ThamCoCheapestProductService.Tests.Controllers
         [Test]
         public async Task GetAllCheapestProductSuppliers_ReturnsOkResult_WithListOfSuppliers()
         {
-            // Arrange
             var suppliers = new List<CompanyWithProductDto>
             {
-                new CompanyWithProductDto { ProductId = 1, CompanyId = 1, Name = "Product1", Brand = "Brand1", Description = "Description1", Price = 10, ImageUrl = "http://example.com/image1" },
-                new CompanyWithProductDto { ProductId = 2, CompanyId = 2, Name = "Product2", Brand = "Brand2", Description = "Description2", Price = 20, ImageUrl = "http://example.com/image2" }
+                new CompanyWithProductDto 
+                { 
+                    ProductId = 1, 
+                    CompanyId = 1, 
+                    Name = "Product1", 
+                    Brand = "Brand1", 
+                    Description = "Description1", 
+                    Price = 10, 
+                    ImageUrl = "Test Url" 
+                },
+                new CompanyWithProductDto 
+                { 
+                    ProductId = 2, 
+                    CompanyId = 2, 
+                    Name = "Product2", 
+                    Brand = "Brand2", 
+                    Description = "Description2", 
+                    Price = 20, 
+                    ImageUrl = "Test Url 2" }
             };
 
             _productServiceMock.Setup(s => s.GetProducts()).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(JsonSerializer.Serialize(new List<ProductDto>
                 {
-                    new ProductDto { ProductId = 1, Name = "Product1", Brand = "Brand1", Description = "Description1", ImageUrl = "http://example.com/image1" },
-                    new ProductDto { ProductId = 2, Name = "Product2", Brand = "Brand2", Description = "Description2", ImageUrl = "http://example.com/image2" }
+                    new ProductDto 
+                    { 
+                        ProductId = 1, 
+                        Name = "Product1", 
+                        Brand = "Brand1", 
+                        Description = "Description1", 
+                        ImageUrl = "Test url" 
+                    },
+                    new ProductDto 
+                    { 
+                        ProductId = 2, 
+                        Name = "Product2", 
+                        Brand = "Brand2", 
+                        Description = "Description2",
+                        ImageUrl = "Test url" 
+                    }
                 }))
             });
 
@@ -58,15 +88,23 @@ namespace ThamCoCheapestProductService.Tests.Controllers
             {
                 Content = new StringContent(JsonSerializer.Serialize(new List<CompanyProductsDto>
                 {
-                    new CompanyProductsDto { ProductId = 1, CompanyId = 1, Price = 10 },
-                    new CompanyProductsDto { ProductId = 2, CompanyId = 2, Price = 20 }
+                    new CompanyProductsDto 
+                    { 
+                        ProductId = 1, 
+                        CompanyId = 1, 
+                        Price = 10 
+                    },
+                    new CompanyProductsDto 
+                    { 
+                        ProductId = 2, 
+                        CompanyId = 2, 
+                        Price = 20 
+                    }
                 }))
             });
 
-            // Act
             var result = await _controller.GetAllCheapestProductSuppliers();
 
-            // Assert
             Assert.IsInstanceOf<OkObjectResult>(result.Result);
             var okResult = result.Result as OkObjectResult;
             Assert.NotNull(okResult);
@@ -78,16 +116,13 @@ namespace ThamCoCheapestProductService.Tests.Controllers
         [Test]
         public async Task GetAllCheapestProductSuppliers_ReturnsNotFound_WhenNoSuppliersFound()
         {
-            // Arrange
             _productServiceMock.Setup(s => s.GetProducts()).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(JsonSerializer.Serialize(new List<ProductDto>()))
             });
 
-            // Act
             var result = await _controller.GetAllCheapestProductSuppliers();
 
-            // Assert
             Assert.IsInstanceOf<NotFoundObjectResult>(result.Result);
             var notFoundResult = result.Result as NotFoundObjectResult;
             Assert.AreEqual("No suppliers found.", notFoundResult.Value);
@@ -96,15 +131,30 @@ namespace ThamCoCheapestProductService.Tests.Controllers
         [Test]
         public async Task GetCheapestProductSupplierById_ReturnsOkResult_WithSupplier()
         {
-            // Arrange
             int productId = 1;
-            var supplier = new CompanyWithProductDto { ProductId = productId, CompanyId = 1, Name = "Product1", Brand = "Brand1", Description = "Description1", Price = 10, ImageUrl = "http://example.com/image1" };
+            var supplier = new CompanyWithProductDto 
+            { 
+                ProductId = productId, 
+                CompanyId = 1, 
+                Name = "Product1", 
+                Brand = "Brand1", 
+                Description = "Description1", 
+                Price = 10, 
+                ImageUrl = "Test Url" 
+            };
 
             _productServiceMock.Setup(s => s.GetProducts()).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(JsonSerializer.Serialize(new List<ProductDto>
                 {
-                    new ProductDto { ProductId = 1, Name = "Product1", Brand = "Brand1", Description = "Description1", ImageUrl = "http://example.com/image1" }
+                    new ProductDto 
+                    { 
+                        ProductId = 1, 
+                        Name = "Product1", 
+                        Brand = "Brand1", 
+                        Description = "Description1", 
+                        ImageUrl = "Test Url" 
+                    }
                 }))
             });
 
@@ -112,14 +162,17 @@ namespace ThamCoCheapestProductService.Tests.Controllers
             {
                 Content = new StringContent(JsonSerializer.Serialize(new List<CompanyProductsDto>
                 {
-                    new CompanyProductsDto { ProductId = 1, CompanyId = 1, Price = 10 }
+                    new CompanyProductsDto 
+                    { 
+                        ProductId = 1, 
+                        CompanyId = 1, 
+                        Price = 10 
+                    }
                 }))
             });
 
-            // Act
             var result = await _controller.GetCheapestProductSupplierById(productId);
 
-            // Assert
             Assert.IsInstanceOf<OkObjectResult>(result.Result);
             var okResult = result.Result as OkObjectResult;
             Assert.NotNull(okResult);
@@ -131,7 +184,6 @@ namespace ThamCoCheapestProductService.Tests.Controllers
         [Test]
         public async Task GetCheapestProductSupplierById_ReturnsNotFound_WhenNoSupplierFound()
         {
-            // Arrange
             int productId = 999; // Invalid productId
 
             _productServiceMock.Setup(s => s.GetProducts()).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
@@ -139,10 +191,8 @@ namespace ThamCoCheapestProductService.Tests.Controllers
                 Content = new StringContent(JsonSerializer.Serialize(new List<ProductDto>()))
             });
 
-            // Act
             var result = await _controller.GetCheapestProductSupplierById(productId);
 
-            // Assert
             Assert.IsInstanceOf<NotFoundObjectResult>(result.Result);
             var notFoundResult = result.Result as NotFoundObjectResult;
             Assert.AreEqual("No supplier found for the specified product ID.", notFoundResult.Value);
