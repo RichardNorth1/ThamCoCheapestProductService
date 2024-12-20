@@ -45,9 +45,6 @@ namespace ThamCoCheapestProductService.Tests.Services
             _service = new CompanyProductService(
                 _httpClient,
                 _cacheMock.Object,
-                _httpClientFactoryMock.Object,
-                _configurationMock.Object,
-                _loggerMock.Object,
                 _tokenServiceMock.Object
             );
         }

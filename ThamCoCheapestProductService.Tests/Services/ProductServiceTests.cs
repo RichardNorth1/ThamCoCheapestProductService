@@ -17,16 +17,12 @@ namespace ThamCoCheapestProductService.Tests.Services
     public class ProductServiceTests
     {
         private Mock<IMemoryCache> _cacheMock;
-        private Mock<IHttpClientFactory> _httpClientFactoryMock;
-        private Mock<IConfiguration> _configurationMock;
         private Mock<ITokenService> _tokenServiceMock;
 
         [SetUp]
         public void SetUp()
         {
             _cacheMock = new Mock<IMemoryCache>();
-            _httpClientFactoryMock = new Mock<IHttpClientFactory>();
-            _configurationMock = new Mock<IConfiguration>();
             _tokenServiceMock = new Mock<ITokenService>();
         }
 
@@ -35,8 +31,6 @@ namespace ThamCoCheapestProductService.Tests.Services
             return new ProductService(
                 httpClient,
                 _cacheMock.Object,
-                _httpClientFactoryMock.Object,
-                _configurationMock.Object,
                 _tokenServiceMock.Object
             );
         }
@@ -91,7 +85,6 @@ namespace ThamCoCheapestProductService.Tests.Services
             {
                 BaseAddress = new Uri("https://example.com")
             };
-            _httpClientFactoryMock.Setup(f => f.CreateClient(It.IsAny<string>())).Returns(httpClient);
 
             var service = CreateProductService(httpClient);
 
@@ -147,7 +140,6 @@ namespace ThamCoCheapestProductService.Tests.Services
             {
                 BaseAddress = new Uri("https://example.com")
             };
-            _httpClientFactoryMock.Setup(f => f.CreateClient(It.IsAny<string>())).Returns(httpClient);
 
             var mockCacheEntry = new Mock<ICacheEntry>();
             _cacheMock.Setup(c => c.CreateEntry(It.IsAny<object>())).Returns(mockCacheEntry.Object);
